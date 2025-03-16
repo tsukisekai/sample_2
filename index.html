@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ポケモン風RPGインフォグラフィック</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=DotGothic16&display=swap');
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+
+        /* ベースデザイン */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #1F4673; /* 紺色の背景 */
+            font-family: 'DotGothic16', 'Press Start 2P', monospace;
+            color: #333;
+            overflow-x: hidden;
+            image-rendering: pixelated;
+        }
+
+        /* ゲームウィンドウ */
+        .game-window {
+            background: #F0F8FF; /* アリスブルー、より明るい背景色 */
+            border: 8px solid #78A0E0; /* 明るめのブルー */
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        /* ピクセル風の境界線 */
+        .pixel-border {
+            position: relative;
+        }
+        .pixel-border::after {
+            content: "";
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            border: 4px solid #5681C5; /* 明るめの紺色 */
+            border-radius: 15px;
+            z-index: -1;
+        }
+
+        /* ポケモン風タイトル */
+        .game-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 28px;
+            color: #FFEB99; /* 明るい黄色 */
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 3px 3px 0 #5289D5, /* 明るいブルー */
+                         -1px -1px 0 #5289D5,  
+                         1px -1px 0 #5289D5,
+                         -1px 1px 0 #5289D5,
+                         1px 1px 0 #5289D5;
+            letter-spacing: 2px;
+            padding: 10px;
+            animation: title-bounce 2s infinite;
+        }
+
+        @keyframes title-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* ゲームサブタイトル */
+        .game-subtitle {
+            color: #E8F0FF; /* 明るい水色/白に近い色 */
+            text-align: center;
+            font-family: 'DotGothic16', monospace;
+            font-size: 18px;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        /* 対話ボックス */
+        .dialog-box {
+            background: white;
+            border: 5px solid #333;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            position: relative;
+            font-family: 'DotGothic16', monospace;
+        }
+
+        .dialog-box::before {
+            content: "";
+            position: absolute;
+            bottom: -15px;
+            right: 30px;
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 15px solid #333;
+        }
+
+        /* バトル風スタイル */
+        .battle-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .player-info, .enemy-info {
+            background: white;
+            border: 4px solid #333;
+            border-radius: 10px;
+            padding: 10px;
+            width: 45%;
+            position: relative;
+        }
+
+        .hp-bar {
+            height: 15px;
+            width: 100%;
+            background: #FF5959; /* HP赤色 */
+            border: 2px solid #333;
+            border-radius: 10px;
+            margin-top: 5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hp-bar::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 70%; /* HP量 */
+            background: #59FF59; /* HP緑色 */
+            animation: hp-decrease 2s;
+        }
+
+        /* ポケモン風カード */
+        .mon-card {
+            width: 220px;
+            background: white;
+            border: 5px solid #FFC857; /* 明るい黄色 */
+            border-radius: 15px;
+            padding: 15px;
+            position: relative;
+            text-align: center;
+            box-shadow: 0 8px 0 #E3A412; /* 暗めの黄色 */
+            transition: all 0.2s;
+            margin: 0 auto 30px auto;
+        }
+
+        .mon-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 13px 0 #E3A412;
+        }
+
+        .mon-card-header {
+            background: #5289D5; /* 明るいブルー */
+            color: white;
+            padding: 8px;
+            border-radius: 8px;
+            margin: -15px -15px 15px -15px;
+            font-weight: bold;
+        }
+
+        .mon-card-avatar {
+            height: 100px;
+            width: 100px;
+            margin: 0 auto 15px auto;
+            background: #F0F8E8;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid #3C5AA6;
+            font-size: 40px;
+        }
+
+        .mon-card-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 15px 0;
+        }
+
+        .mon-card-stat {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mon-card-type {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            margin: 5px;
+            color: white;
+            font-size: 12px;
+        }
+
+        .electric {
+            background-color: #F8D030;
+        }
+
+        .water {
+            background-color: #6890F0;
+        }
+
+
+
+        
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 10px rgba(120, 190, 255, 0.5); }
+            100% { box-shadow: 0 0 25px rgba(180, 220, 255, 0.9); }
+        }
+        
+
+
+        /* メニューボタン */
+        .menu-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+
+        .menu-button {
+            background: #3C5AA6; /* ポケモンブルー */
+            color: white;
+            font-family: 'DotGothic16', monospace;
+            font-size: 16px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 0 #2A3C75;
+            transition: all 0.1s;
+            position: relative;
+            font-weight: bold;
+            margin: 5px;
+        }
+
+        .menu-button:hover {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #2A3C75;
+        }
+
+        .menu-button:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        /* ポケモン風ボタン */
+        .action-button {
+            display: block;
+            width: 80%;
+            margin: 20px auto;
+            background: #FF8C66; /* サーモンピンク */
+            color: white;
+            font-family: 'DotGothic16', monospace;
+            font-size: 18px;
+            padding: 15px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 6px 0 #E06A48; /* 暗めのサーモン */
+            transition: all 0.1s;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .action-button:hover {
+            transform: translateY(3px);
+            box-shadow: 0 3px 0 #E06A48;
+        }
+
+        .action-button:active {
+            transform: translateY(6px);
+            box-shadow: none;
+        }
+
+        .rpg-list {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+
+        .rpg-list li {
+            position: relative;
+            padding: 5px 0;
+            padding-left: 25px;
+        }
+
+        .rpg-list li::before {
+            content: "➤";
+            position: absolute;
+            left: 0;
+            color: #3C5AA6;
+        }
+
+        .mon-card-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .game-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- メインコンテナ -->
+    <div class="game-container">
+        <!-- タイトル -->
+        <h1 class="game-title">業務丸ごとお任せください！</h1>
+        <div class="game-subtitle">私たちが時間のかかる業務を請け負います。<br>あなたは本来の仕事に集中できます</div>
+
+        <!-- メインウィンドウ -->
+        <div class="game-window pixel-border">
+            <!-- 対話ボックス -->
+            <div class="dialog-box">
+                <div class="dialog-text" id="dialog-text">
+                    業務効率化アドバイザーが登場！<br>
+                    「あなたの大切な時間を取り戻します！<br>
+                    面倒な業務は私たちにお任せください！」
+                </div>
+            </div>
+
+            <!-- バトル画面風レイアウト -->
+            <div class="battle-container">
+                <div class="player-info">
+                    <h3>お客様の課題</h3>
+                    <div class="hp-bar"></div>
+                    <p><strong>「業務過多の悩み」</strong></p>
+                    <p>① 事務作業に追われる毎日<br>
+                    ② 資料作成に時間を取られる<br>
+                    ③ コア業務に集中できない</p>
+                    <p>本来の業務に集中できない！</p>
+                </div>
+
+                <div class="enemy-info">
+                    <h3>私たちの提案</h3>
+                    <div class="hp-bar" style="background: #59FF59;"></div>
+                    <p><strong>「業務請負サービス」</strong></p>
+                    <p>① 事務作業の完全代行<br>
+                    ② 報告書・資料作成代行<br>
+                    ③ データ入力・管理の一括請負</p>
+                    <p>最大70%の時間を取り戻せます！</p>
+                </div>
+            </div>
+
+            <!-- メニューボタン -->
+            <div class="menu-container">
+                <button class="menu-button">サービス詳細</button>
+                <button class="menu-button">料金プラン</button>
+                <button class="menu-button">お問い合わせ</button>
+            </div>
+        </div>
+
+        <!-- ポケモンカード風カード -->
+        <div class="mon-card-container">
+            <div class="mon-card">
+                <div class="mon-card-header">業務効率化の達人</div>
+                <div class="mon-card-avatar">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <!-- 時計のベース -->
+                        <circle cx="50" cy="50" r="40" fill="#F0F8FF" stroke="#5289D5" stroke-width="3"/>
+                        <!-- 時計の文字盤 -->
+                        <circle cx="50" cy="50" r="38" fill="#F0F8FF" stroke="#5289D5" stroke-width="1"/>
+                        <!-- 時計の中心点 -->
+                        <circle cx="50" cy="50" r="3" fill="#5289D5"/>
+                        <!-- 時計の針（時間） -->
+                        <line x1="50" y1="50" x2="50" y2="25" stroke="#5289D5" stroke-width="4" stroke-linecap="round"/>
+                        <!-- 時計の針（分） -->
+                        <line x1="50" y1="50" x2="70" y2="50" stroke="#5289D5" stroke-width="3" stroke-linecap="round"/>
+                        <!-- 魔法のきらめき -->
+                        <path d="M85,35 L90,40 L85,45 L90,50" stroke="#FFC857" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M15,65 L10,60 L15,55 L10,50" stroke="#FFC857" stroke-width="2" stroke-linecap="round"/>
+                        <circle cx="85" cy="35" r="2" fill="#FFC857"/>
+                        <circle cx="15" cy="65" r="2" fill="#FFC857"/>
+                        <!-- 魔法の星 -->
+                        <path d="M75,20 L77,25 L82,25 L78,29 L80,34 L75,31 L70,34 L72,29 L68,25 L73,25 Z" fill="#FFC857"/>
+                        <path d="M25,80 L27,85 L32,85 L28,89 L30,94 L25,91 L20,94 L22,89 L18,85 L23,85 Z" fill="#FFC857"/>
+                        <!-- AIの要素（サーキットパターン） -->
+                        <path d="M50,10 Q60,20 70,10" stroke="#5289D5" stroke-width="1" fill="none"/>
+                        <path d="M50,90 Q40,80 30,90" stroke="#5289D5" stroke-width="1" fill="none"/>
+                        <circle cx="70" cy="10" r="2" fill="#5289D5"/>
+                        <circle cx="30" cy="90" r="2" fill="#5289D5"/>
+                    </svg>
+                </div>
+                <p>業務を丸ごとお任せください</p>
+                <div class="mon-card-stats">
+                    <div class="mon-card-stat">
+                        <span>時間削減</span>
+                        <span class="mon-card-stat-value">70%↑</span>
+                    </div>
+                    <div class="mon-card-stat">
+                        <span>満足度</span>
+                        <span class="mon-card-stat-value">★★★</span>
+                    </div>
+                </div>
+                <div>
+                    <span class="mon-card-type electric">高品質</span>
+                    <span class="mon-card-type water">安心保証</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 参加方法 -->
+        <div class="game-window pixel-border">
+            <h3 style="text-align: center; margin-top: 0;">お申し込み方法</h3>
+            <ul class="rpg-list">
+                <li>無料相談のご予約</li>
+                <li>ヒアリングでニーズをお伺い</li>
+                <li>最適なプランをご提案</li>
+            </ul>
+            <a href="#" class="action-button">無料相談を予約する！</a>
+        </div>
+    </div>
+
+    <!-- JavaScriptアニメーション -->
+    <script>
+        // 対話テキストのタイピングアニメーション
+        function typeWriter(elementId, text, speed) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = "";
+            
+            let i = 0;
+            function typing() {
+                if (i < text.length) {
+                    if (text.charAt(i) === '<' && text.substring(i, i+4) === '<br>') {
+                        element.innerHTML += "<br>";
+                        i += 4;
+                    } else {
+                        element.innerHTML += text.charAt(i);
+                        i++;
+                    }
+                    setTimeout(typing, speed);
+                }
+            }
+            typing();
+        }
+
+        // アニメーションをトリガー
+        document.addEventListener('DOMContentLoaded', function() {
+            const dialogText = "業務効率化アドバイザーが登場！<br>「あなたの大切な時間を取り戻します！<br>面倒な業務は私たちにお任せください！」";
+            typeWriter("dialog-text", dialogText, 50);
+        });
+    </script>
+</body>
+</html>
